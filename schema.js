@@ -82,6 +82,16 @@ const schema = new GraphQLSchema({
                     `https://api.coinmarketcap.com/v1/ticker/?limit=${args.limit}`
                 )
                 .then(response => response.json())
+            },
+            ticker: {
+                type: new GraphQLList(TickerType),
+                args: {
+                    id: { type: GraphQLString }
+                },
+                resolve: (root, args) => fetch(
+                    `https://api.coinmarketcap.com/v1/ticker/${args.id}`
+                )
+                .then(response => response.json())
             }
         }
     })
