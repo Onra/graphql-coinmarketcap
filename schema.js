@@ -68,6 +68,37 @@ const TickerType = new GraphQLObjectType({
     }
 })
 
+const GlobalType = new GraphQLObjectType({
+    name: 'Global',
+    description: 'Global data about markets',
+    fields: {
+        totalMarketCapUSD: {
+            type: GraphQLFloat,
+            resolve: json => json.total_market_cap_usd
+        },
+        total24hVolumeUSD: {
+            type: GraphQLFloat,
+            resolve: json => json.total_24h_volume_usd
+        },
+        bitcoinPercentageOfMarketCap: {
+            type: GraphQLFloat,
+            resolve: json => json.bitcoin_percentage_of_market_cap
+        },
+        activeCurrencies: {
+            type: GraphQLInt,
+            resolve: json => json.active_currencies
+        },
+        activeAssets: {
+            type: GraphQLInt,
+            resolve: json => json.active_assets
+        },
+        activeMarkets: {
+            type: GraphQLInt,
+            resolve: json => json.active_markets
+        }
+    }
+})
+
 const schema = new GraphQLSchema({
     query: new GraphQLObjectType({
         name: 'Query',
@@ -90,6 +121,13 @@ const schema = new GraphQLSchema({
                 },
                 resolve: (root, args) => fetch(
                     `https://api.coinmarketcap.com/v1/ticker/${args.id}`
+                )
+                .then(response => response.json())
+            },
+            global: {
+                type: GlobalType,
+                resolve: (root, args) => fetch(
+                    `https://api.coinmarketcap.com/v1/global`
                 )
                 .then(response => response.json())
             }
