@@ -1,4 +1,4 @@
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
 
 const {
     GraphQLSchema,
@@ -7,7 +7,7 @@ const {
     GraphQLList,
     GraphQLInt,
     GraphQLFloat
-} = require('graphql')
+} = require('graphql');
 
 const TickerType = new GraphQLObjectType({
     name: 'Ticker',
@@ -66,7 +66,7 @@ const TickerType = new GraphQLObjectType({
             resolve: json => json.last_updated
         }
     }
-})
+});
 
 const GlobalType = new GraphQLObjectType({
     name: 'Global',
@@ -97,7 +97,7 @@ const GlobalType = new GraphQLObjectType({
             resolve: json => json.active_markets
         }
     }
-})
+});
 
 const schema = new GraphQLSchema({
     query: new GraphQLObjectType({
@@ -107,10 +107,11 @@ const schema = new GraphQLSchema({
             tickers: {
                 type: new GraphQLList(TickerType),
                 args: {
-                    limit: { type: GraphQLInt }
+                    limit: {type: GraphQLInt},
+                    start: {type: GraphQLInt},
                 },
                 resolve: (root, args) => fetch(
-                    `https://api.coinmarketcap.com/v1/ticker/?limit=${args.limit}`
+                    `https://api.coinmarketcap.com/v1/ticker/?limit=${args.limit || 100}&start=${args.start || 0}`
                 )
                 .then(response => response.json())
             },
@@ -133,6 +134,6 @@ const schema = new GraphQLSchema({
             }
         }
     })
-})
+});
 
-module.exports = schema
+module.exports = schema;
